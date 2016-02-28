@@ -10,6 +10,7 @@ Run a reverse proxy.  This allows debugging and live-reloading to work
 correctly so the android can connect to the `react-native start` process.
 
 ```sh
+$ adb reverse --list
 $ adb reverse tcp:8081 tcp:8081
 ```
 
