@@ -6,7 +6,10 @@
     "start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
-    "react-native": "^0.20.0",
+    "react-native": "^0.20.0"
+  },
+  "devDependencies": {
+    "flow-bin": "^0.21.0",
     "react-native-cli": "^0.1.10"
   }
 }
