@@ -7,6 +7,7 @@ import React, {
   AppRegistry,
   Component,
   Image,
+  ListView,
   StyleSheet,
   Text,
   View
@@ -16,9 +17,67 @@ var MOCKED_MOVIES_DATA = [
 	{title: 'Title', year: '2015', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'}},
 ];
 
+/**
+ * For quota reasons we replaced the Rotten Tomatoes' API with a sample data of
+ * their very own API that lives in React Native's Github repo.
+ */
+var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
+
 class testandroidreactproject extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { movies: null, };
+
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      loaded: false,
+    };
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+   fetchData() {
+     fetch(REQUEST_URL)
+       .then((response) => response.json())
+       .then((responseData) => {
+         this.setState({
+           dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+           loaded: true,
+         });
+       })
+       .done();
+   }
+
   render() {
-    var movie = MOCKED_MOVIES_DATA[0];
+    if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
+
+    return (
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this.renderMovie}
+        style={styles.listView}
+      />
+    );
+  }
+
+  renderLoadingView() {
+    return (
+      <View style={styles.container}>
+        <Text>
+          Loading movies...
+        </Text>
+      </View>
+    );
+  }
+
+  renderMovie(movie) {
     return (
       <View style={styles.container}>
         <Image
@@ -31,23 +90,14 @@ class testandroidreactproject extends Component {
         </View>
       </View>
     );
-    // return (
-    //   <View style={styles.container}>
-    //     <Text style={styles.welcome}>
-    //       Welcome to React Native! YOYOYO HOHOHOHO
-    //     </Text>
-    //     <Text style={styles.instructions}>
-    //       To get started, edit index.android.js
-    //     </Text>
-    //     <Text style={styles.instructions}>
-    //       Shake or press menu button for dev menu
-    //     </Text>
-    //   </View>
-    // );
   }
 }
 
 const styles = StyleSheet.create({
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF',
+  },
   container: {
     flex: 1,
     flexDirection: 'row',
